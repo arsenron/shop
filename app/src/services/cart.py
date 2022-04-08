@@ -11,7 +11,6 @@ from src.models.core.cart import (
     CartProduct,
     AbstractShoppingCart,
     ShoppingCartError,
-    ShoppingCart,
 )
 from .products import IProductService, ProductService
 from src.models.schemas.cart import ShoppingCart as ShoppingCartSchema
@@ -19,7 +18,11 @@ from src.models.schemas.cart import ShoppingCart as ShoppingCartSchema
 
 class ICartService(abc.ABC):
     @abstractmethod
-    async def add_product(self, product_id: int) -> int:
+    async def add_product(self, product_id: int, amount: int) -> int:
+        pass
+
+    @abstractmethod
+    async def place_order(self) -> ShoppingCartSchema:
         pass
 
     @abstractmethod
@@ -27,7 +30,7 @@ class ICartService(abc.ABC):
         pass
 
 
-class CartService:
+class CartService(ICartService):
     def __init__(
         self,
         db: Db = Depends(get_db),
@@ -50,9 +53,6 @@ class CartService:
         except ShoppingCartError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
 
-    async def remove_product(self, product_id: int) -> int:
-        pass
-
     async def place_order(self) -> ShoppingCartSchema:
         cart: AbstractShoppingCart = await self.cart_repo.get_cart(self.cart_id)
         if not cart:
@@ -65,3 +65,6 @@ class CartService:
         return ShoppingCartSchema(
             total_amount=total_amount, cart_products=cart.cart_products
         )
+
+    async def remove_product(self, product_id: int) -> int:
+        raise NotImplementedError()
