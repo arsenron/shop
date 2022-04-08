@@ -1,10 +1,6 @@
 from pydantic import conint
-from .base import BaseModel
+from commons import BaseModel, RoundedFloat
 from src.models.core.products import Product
-
-
-class ShoppingCartError(Exception):
-    pass
 
 
 class CartProduct(BaseModel):
@@ -14,7 +10,7 @@ class CartProduct(BaseModel):
 
 class ShoppingCart(BaseModel):
     cart_products: list[CartProduct] = []
-    total_amount: float = 0
+    total_amount: RoundedFloat = 0
 
     def add_product(self, cart_product: CartProduct) -> int:
         cost_of_products = cart_product.product.price * cart_product.amount

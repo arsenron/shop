@@ -52,7 +52,7 @@ class AbstractShoppingCartCalculator(ABC):
     def calculate_cart(self) -> float:
         for calculation_rule in self.select_calculation_rules():
             calculation_rule.apply_rule(self.shopping_cart)
-        return self.shopping_cart.total_amount
+        return round(self.shopping_cart.total_amount, 2)
 
 
 class ShoppingCartCalculator(AbstractShoppingCartCalculator):

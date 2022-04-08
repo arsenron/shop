@@ -1,4 +1,5 @@
-from .base import BaseModel
+from commons import BaseModel, RoundedFloat
+
 
 class ProductIn(BaseModel):
     name: str
@@ -7,12 +8,8 @@ class ProductIn(BaseModel):
 class Product(BaseModel):
     id: int
     name: str
-    price: float
+    price: RoundedFloat
 
 
 class AllProducts(BaseModel):
-    __root__: list[Product]
-
-
-class AllProductsSchema(BaseModel):
     products: list[Product]

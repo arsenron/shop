@@ -11,7 +11,7 @@ class ProductRepository(BaseRepository):
             select(ProductsORM)
         )).all()
         list_of_product_models = [row[0] for row in product_models]
-        return AllProducts.from_orm(list_of_product_models)
+        return AllProducts(products=[Product.from_orm(m) for m in list_of_product_models])
 
     async def add_product(self, product_in: ProductIn):
         """
@@ -35,7 +35,10 @@ class ProductRepository(BaseRepository):
         product_orm = await self.db.scalar(
             select(ProductsORM).filter(ProductsORM.id == id)
         )
-        return Product.from_orm(product_orm)
+        if product_orm:
+            return Product.from_orm(product_orm)
+        else:
+            return None
 
     async def check_if_product_exists(self, id: int) -> Product | None:
         return await self.db.scalar(

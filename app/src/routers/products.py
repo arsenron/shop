@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends
 from src.services.products import IProductService, ProductService
-from src.models.core.products import ProductIn, AllProductsSchema
+from src.models.core.products import ProductIn, AllProducts
 from src.lib import default_response, default_response_example
 
 router = APIRouter(prefix="/products")
 
 
-@router.get("/all", response_model=AllProductsSchema)
+@router.get("/all", response_model=AllProducts)
 async def get_all_products(svc: IProductService = Depends(ProductService)):
     return await svc.get_products()
 
