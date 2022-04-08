@@ -7,12 +7,12 @@ router = APIRouter(prefix="/cart")
 
 @router.post("/add/{product_id}")
 async def add_to_cart(
-    product_id: int, amount: int = 1, svc: CartService = Depends(CartService)
+    product_id: int, amount: int = 1, svc: ICartService = Depends(CartService)
 ):
     return await svc.add_product(product_id, amount)
 
 
 @router.post("/place", response_model=ShoppingCartSchema)
-async def place_order(svc: CartService = Depends(CartService)):
+async def place_order(svc: ICartService = Depends(CartService)):
     cart = await svc.place_order()
     return cart

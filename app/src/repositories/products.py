@@ -18,14 +18,14 @@ class ProductRepository(BaseRepository):
         """
         Updates product in case of matching name
         """
-        stmt = insert(ProductsORM).values(name=product_in.name, price=product_in.price)
-        excluded = dict(stmt.excluded)
-        excluded.pop("id")
-        stmt = stmt.on_conflict_do_update(
-            index_elements=[ProductsORM.name],
-            set_=dict(excluded)
+        existing_product = await self.db.scalar(
+            select(ProductsORM).filter(ProductsORM.name == product_in.name)
         )
-        await self.db.execute(stmt)
+        if existing_product:
+            existing_product.price = product_in.price
+        else:
+            product = ProductsORM(name=product_in.name, price=product_in.price)
+            self.db.add(product)
 
     async def remove_product(self, product_id: int):
         await self.db.execute(

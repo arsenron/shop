@@ -53,14 +53,17 @@ class CartService(ICartService):
             raise HTTPException(status_code=400, detail=str(exc))
 
     async def place_order(self) -> ShoppingCartSchema:
-        cart: AbstractShoppingCart = await self.cart_repo.get_cart(self.cart_id)
-        if not cart:
-            cart = await self.cart_repo.create_cart(self.cart_id)
+        cart_orm = await self.cart_repo.get_cart(self.cart_id)
+        if not cart_orm:
+            cart_orm = await self.cart_repo.create_cart(self.cart_id)
+        cart = ShoppingCart(cart_products=[
+            CartProduct.from_orm(product) for product in cart_orm.cart_products
+        ])
         try:
             total_amount = cart.calculate_cart()
         except ShoppingCartError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
-        await self.cart_repo.delete_order(self.cart_id)
+        await self.cart_repo.delete_order(cart_orm)
         return ShoppingCartSchema(
-            total_amount=total_amount, cart_products=cart.cart_products
+            total_amount=total_amount, cart_products=cart_orm.cart_products
         )

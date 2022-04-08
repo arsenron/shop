@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from .base import BaseRepository
 from src.models.core.cart import ShoppingCart, CartProduct
@@ -19,7 +19,8 @@ class CartRepository(BaseRepository):
     async def get_cart(self, cart_id: str) -> CartsORM | None:
         carts_orm = await self.db.scalar(
             select(CartsORM)
-            .filter(CartsORM.id == cart_id)
+            .filter(CartsORM.cart_id == cart_id)
+            .filter(CartsORM.is_placed == False)
         )
         if not carts_orm:
             return None
@@ -27,7 +28,7 @@ class CartRepository(BaseRepository):
             return carts_orm
 
     async def create_cart(self, cart_id: str) -> CartsORM:
-        empty_cart = CartsORM(id=cart_id, cart_products=[])
+        empty_cart = CartsORM(cart_id=cart_id, cart_products=[])
         self.db.add(
             empty_cart
         )
@@ -35,16 +36,16 @@ class CartRepository(BaseRepository):
         return empty_cart
 
     async def add_product(self, cart: CartsORM, product_id: int, amount: int):
-        stmt = insert(CartProductsOrm).values(product_id=product_id, amount=amount, cart_id=cart.id)
+        stmt = insert(CartProductsOrm).values(product_id=product_id, amount=amount, carts_id=cart.id)
         excluded = dict(stmt.excluded)
-        excluded.pop("cart_id")
+        excluded.pop("carts_id")
         excluded.pop("product_id")
         stmt = stmt.on_conflict_do_update(
-            index_elements=[CartProductsOrm.cart_id, CartProductsOrm.product_id],
+            index_elements=[CartProductsOrm.carts_id, CartProductsOrm.product_id],
             set_=dict(excluded)
         )
         await self.db.execute(stmt)
         await self.db.refresh(cart)
 
-    async def delete_order(self, cart_id: str):
-        cart_db.pop(cart_id)
+    async def delete_order(self, cart_orm: CartsORM):
+        cart_orm.is_placed = True
