@@ -9,11 +9,9 @@ from src.repositories.cart import CartRepository
 from fastapi import Depends
 from src.models.core.cart import (
     CartProduct,
-    AbstractShoppingCart,
     ShoppingCart,
-    ShoppingCartError,
-    ShoppingCartSchema,
 )
+from .calculations import AbstractShoppingCartCalculator, ShoppingCartCalculator, ShoppingCartError
 from .products import IProductService, ProductService
 
 
@@ -23,7 +21,7 @@ class ICartService(abc.ABC):
         pass
 
     @abstractmethod
-    async def place_order(self) -> ShoppingCartSchema:
+    async def place_order(self) -> ShoppingCart:
         pass
 
 
@@ -42,28 +40,30 @@ class CartService(ICartService):
         cart_orm = await self.cart_repo.get_cart(self.cart_id)
         if not cart_orm:
             cart_orm = await self.cart_repo.create_cart(self.cart_id)
-        product = await self.product_service.get_product_by_id(product_id)
+        await self.product_service.get_product_by_id(product_id)
         await self.cart_repo.add_product(cart_orm, product_id, amount)
-        cart = ShoppingCart(cart_products=[
-            CartProduct.from_orm(product) for product in cart_orm.cart_products
-        ])
+        shopping_cart = ShoppingCart()
+        for product in cart_orm.cart_products:
+            shopping_cart.add_product(CartProduct.from_orm(product))
+        shopping_cart_calculator: AbstractShoppingCartCalculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
-            return cart.calculate_cart()
+            return shopping_cart_calculator.calculate_cart()
         except ShoppingCartError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
 
-    async def place_order(self) -> ShoppingCartSchema:
+    async def place_order(self) -> ShoppingCart:
         cart_orm = await self.cart_repo.get_cart(self.cart_id)
         if not cart_orm:
             cart_orm = await self.cart_repo.create_cart(self.cart_id)
-        cart = ShoppingCart(cart_products=[
-            CartProduct.from_orm(product) for product in cart_orm.cart_products
-        ])
+        shopping_cart = ShoppingCart()
+        for product in cart_orm.cart_products:
+            shopping_cart.add_product(CartProduct.from_orm(product))
+        shopping_cart_calculator: AbstractShoppingCartCalculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
-            total_amount = cart.calculate_cart()
+            total_amount = shopping_cart_calculator.calculate_cart()
         except ShoppingCartError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         await self.cart_repo.delete_order(cart_orm)
-        return ShoppingCartSchema(
+        return ShoppingCart(
             total_amount=total_amount, cart_products=cart_orm.cart_products
         )

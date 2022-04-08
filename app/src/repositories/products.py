@@ -1,5 +1,4 @@
 from sqlalchemy import select, delete
-from sqlalchemy.dialects.postgresql import insert
 
 from .base import BaseRepository
 from src.models.core.products import AllProducts, Product, ProductIn

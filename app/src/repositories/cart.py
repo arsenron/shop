@@ -1,4 +1,4 @@
-from sqlalchemy import select, update
+from sqlalchemy import select
 
 from .base import BaseRepository
 from src.models.core.cart import ShoppingCart, CartProduct
