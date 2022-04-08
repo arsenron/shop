@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from src.services.products import IProductService, ProductService
-from src.models.schemas.products import AllProducts, Product
+from src.models.core.products import AllProducts, Product
 from src.lib import default_response
 
 router = APIRouter(prefix="/products")

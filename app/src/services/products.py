@@ -1,10 +1,10 @@
 import abc
 from fastapi import HTTPException
 
-from src.models.schemas.products import AllProducts, Product
+from src.models.core.products import AllProducts, Product
 from abc import abstractmethod
 from src.database import Db
-from src.deps import get_db
+from src.deps.common import get_db
 from src.repositories.products import ProductRepository
 from fastapi import Depends
 from src.lib import default_response

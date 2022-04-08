@@ -1,5 +1,5 @@
 from .base import BaseRepository
-from src.models.schemas.products import AllProducts, Product
+from src.models.core.products import AllProducts, Product
 
 
 products = AllProducts(
