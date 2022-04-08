@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 from src.services.cart import ICartService, CartService
-from src.models.schemas.cart import ShoppingCart
+from src.models.core.cart import ShoppingCartSchema
 
 router = APIRouter(prefix="/cart")
 
@@ -12,7 +12,7 @@ async def add_to_cart(
     return await svc.add_product(product_id, amount)
 
 
-@router.post("/place", response_model=ShoppingCart)
+@router.post("/place", response_model=ShoppingCartSchema)
 async def place_order(svc: CartService = Depends(CartService)):
     cart = await svc.place_order()
     return cart

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from pydantic import BaseModel, conint
+from pydantic import conint
+from .base import BaseModel
 from src.models.core.products import Product
 
 
@@ -9,7 +10,7 @@ class ShoppingCartError(Exception):
 
 
 class CartProduct(BaseModel):
-    amount: conint(ge=1)
+    amount: conint(ge=0)
     product: Product
 
 
@@ -52,3 +53,8 @@ class ShoppingCart(AbstractShoppingCart):
                 f"total amount cannot exceed {self.TOTAL_AVAILABLE_AMOUNT}"
             )
         return total_amount
+
+
+class ShoppingCartSchema(BaseModel):
+    total_amount: float
+    cart_products: list[CartProduct]

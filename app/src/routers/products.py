@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends
 from src.services.products import IProductService, ProductService
-from src.models.core.products import AllProducts, Product
-from src.lib import default_response
+from src.models.core.products import ProductIn, AllProductsSchema
+from src.lib import default_response, default_response_example
 
 router = APIRouter(prefix="/products")
 
 
-@router.get("/all", response_model=AllProducts)
+@router.get("/all", response_model=AllProductsSchema)
 async def get_all_products(svc: IProductService = Depends(ProductService)):
     return await svc.get_products()
 
@@ -16,15 +16,15 @@ async def get_product(product_id: int, svc: IProductService = Depends(ProductSer
     return await svc.get_product_by_id(product_id)
 
 
-@router.put("")
+@router.put("", responses=default_response_example)
 async def create_product(
-    product: Product, svc: IProductService = Depends(ProductService)
+    product: ProductIn, svc: IProductService = Depends(ProductService)
 ):
     await svc.create_product(product)
     return default_response
 
 
-@router.delete("/{product_id}")
+@router.delete("/{product_id}", responses=default_response_example)
 async def remove_product(
     product_id: int, svc: IProductService = Depends(ProductService)
 ):

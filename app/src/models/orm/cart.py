@@ -11,6 +11,8 @@ class Carts(Base):
     id = Column(Text, primary_key=True)
     created_at = Column(DateTime, nullable=False, server_default=text("now()"))
 
+    cart_products = relationship("CartProducts", backref="cart", lazy="immediate")
+
 
 class CartProducts(Base):
     __tablename__ = 'cart_products'
@@ -21,5 +23,4 @@ class CartProducts(Base):
     amount = Column(Integer, nullable=False, server_default=text("1"))
     is_placed = Column(Boolean, nullable=False, server_default=text("false"))
 
-    cart = relationship('Carts')
-    product = relationship('Products')
+    product = relationship('Products', lazy="immediate")

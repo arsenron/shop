@@ -10,10 +10,11 @@ from fastapi import Depends
 from src.models.core.cart import (
     CartProduct,
     AbstractShoppingCart,
+    ShoppingCart,
     ShoppingCartError,
+    ShoppingCartSchema,
 )
 from .products import IProductService, ProductService
-from src.models.schemas.cart import ShoppingCart as ShoppingCartSchema
 
 
 class ICartService(abc.ABC):
@@ -23,10 +24,6 @@ class ICartService(abc.ABC):
 
     @abstractmethod
     async def place_order(self) -> ShoppingCartSchema:
-        pass
-
-    @abstractmethod
-    async def remove_product(self, product_id: int) -> int:
         pass
 
 
@@ -42,12 +39,14 @@ class CartService(ICartService):
         self.cart_id = cart_id
 
     async def add_product(self, product_id: int, amount: int) -> int:
-        cart: AbstractShoppingCart = await self.cart_repo.get_cart(self.cart_id)
-        if not cart:
-            cart = await self.cart_repo.create_cart(self.cart_id)
+        cart_orm = await self.cart_repo.get_cart(self.cart_id)
+        if not cart_orm:
+            cart_orm = await self.cart_repo.create_cart(self.cart_id)
         product = await self.product_service.get_product_by_id(product_id)
-        cart_product = CartProduct(amount=amount, product=product)
-        await self.cart_repo.add_product(cart, cart_product)
+        await self.cart_repo.add_product(cart_orm, product_id, amount)
+        cart = ShoppingCart(cart_products=[
+            CartProduct.from_orm(product) for product in cart_orm.cart_products
+        ])
         try:
             return cart.calculate_cart()
         except ShoppingCartError as exc:
@@ -65,6 +64,3 @@ class CartService(ICartService):
         return ShoppingCartSchema(
             total_amount=total_amount, cart_products=cart.cart_products
         )
-
-    async def remove_product(self, product_id: int) -> int:
-        raise NotImplementedError()
