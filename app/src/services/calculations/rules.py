@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from models.core.cart import ShoppingCart
+from src.models.core.cart import ShoppingCart
 
 class ShoppingCartError(Exception):
     pass
@@ -39,22 +39,3 @@ class ExceedingRule(ICalculationRule):
     def apply_rule(self, shopping_cart: ShoppingCart):
         if shopping_cart.total_amount > self.TOTAL_AVAILABLE_AMOUNT:
             raise ShoppingCartError(f"total amount cannot exceed {self.TOTAL_AVAILABLE_AMOUNT}")
-
-
-class AbstractShoppingCartCalculator(ABC):
-    def __init__(self, shopping_cart: ShoppingCart):
-        self.shopping_cart = shopping_cart
-
-    @abstractmethod
-    def select_calculation_rules(self) -> list[ICalculationRule]:
-        pass
-
-    def calculate_cart(self) -> float:
-        for calculation_rule in self.select_calculation_rules():
-            calculation_rule.apply_rule(self.shopping_cart)
-        return round(self.shopping_cart.total_amount, 2)
-
-
-class ShoppingCartCalculator(AbstractShoppingCartCalculator):
-    def select_calculation_rules(self) -> list[ICalculationRule]:
-        return [SameKindRule(), DiscountRule(), ExceedingRule()]

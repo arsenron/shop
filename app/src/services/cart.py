@@ -11,7 +11,8 @@ from src.models.core.cart import (
     CartProduct,
     ShoppingCart,
 )
-from .calculations import AbstractShoppingCartCalculator, ShoppingCartCalculator, ShoppingCartError
+from calculations.calculations import AbstractShoppingCartCalculator, ShoppingCartCalculator
+from calculations.rules import ShoppingCartError
 from .products import IProductService, ProductService
 
 
