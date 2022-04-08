@@ -17,12 +17,16 @@ async def get_product(product_id: int, svc: IProductService = Depends(ProductSer
 
 
 @router.put("")
-async def create_product(product: Product, svc: IProductService = Depends(ProductService)):
+async def create_product(
+    product: Product, svc: IProductService = Depends(ProductService)
+):
     await svc.create_product(product)
     return default_response
 
 
 @router.delete("/{product_id}")
-async def remove_product(product_id: int, svc: IProductService = Depends(ProductService)):
+async def remove_product(
+    product_id: int, svc: IProductService = Depends(ProductService)
+):
     await svc.remove_product(product_id)
     return default_response

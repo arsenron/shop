@@ -4,7 +4,6 @@ from pydantic import BaseModel, conint
 from src.models.core.products import Product
 
 
-
 class ShoppingCartError(Exception):
     pass
 
@@ -43,9 +42,13 @@ class ShoppingCart(AbstractShoppingCart):
         total_amount = 0
         for cart_product in self.cart_products:
             number_of_free_products = cart_product.amount // self.EVERY_NTH_FREE_PRODUCT
-            total_amount += (cart_product.amount - number_of_free_products) * cart_product.product.price
+            total_amount += (
+                cart_product.amount - number_of_free_products
+            ) * cart_product.product.price
         if total_amount >= self.TOTAL_SUM_TO_APPLY_DISCOUNT:
             total_amount -= self.DISCOUNT_BY_TOTAL_SUM
         if total_amount > self.TOTAL_AVAILABLE_AMOUNT:
-            raise ShoppingCartError(f'total amount cannot exceed {self.TOTAL_AVAILABLE_AMOUNT}')
+            raise ShoppingCartError(
+                f"total amount cannot exceed {self.TOTAL_AVAILABLE_AMOUNT}"
+            )
         return total_amount

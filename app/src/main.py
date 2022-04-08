@@ -3,12 +3,14 @@ from types import ModuleType
 import uvicorn
 from fastapi import FastAPI, Request
 from importlib import import_module
+from starlette.middleware.sessions import SessionMiddleware
 
 import cli
 import database
 import routers
 
 app = FastAPI()
+SESSION_SECRET_KEY = "my_super_secret_key"
 
 
 @app.middleware("http")
@@ -31,6 +33,7 @@ async def close_database_connection_pools():
 class Initializer:
     def initialize(self):
         self.add_routers_from_all_modules()
+        app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET_KEY)
 
     def add_routers_from_all_modules(self):
         """

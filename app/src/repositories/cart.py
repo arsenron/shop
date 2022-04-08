@@ -5,7 +5,7 @@ from src.models.core.products import Product
 cart_db = {
     "default": ShoppingCart(
         cart_products=[
-            CartProduct(amount=1, product=Product(id=1, name='melon', price=2))
+            CartProduct(amount=1, product=Product(id=1, name="melon", price=2))
         ]
     )
 }
@@ -25,3 +25,6 @@ class CartRepository(BaseRepository):
 
     async def add_product(self, cart: ShoppingCart, cart_product: CartProduct):
         cart.add_product(cart_product)
+
+    async def delete_order(self, cart_id: str):
+        cart_db.pop(cart_id)
