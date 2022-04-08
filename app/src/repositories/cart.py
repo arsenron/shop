@@ -4,7 +4,7 @@ from src.models.core.products import Product
 
 cart_db = {
     "default": ShoppingCart(
-        total_amount=10, products=[
+        cart_products=[
             CartProduct(amount=1, product=Product(id=1, name='melon', price=2))
         ]
     )
@@ -19,7 +19,7 @@ class CartRepository(BaseRepository):
             return None
 
     async def create_cart(self, cart_id: str) -> ShoppingCart:
-        empty_cart = ShoppingCart(total_amount=0, products=[])
+        empty_cart = ShoppingCart(cart_products=[])
         cart_db[cart_id] = empty_cart
         return empty_cart
 
