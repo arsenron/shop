@@ -2,7 +2,7 @@ from typing import Any
 
 import yaml
 from pydantic import BaseSettings, Extra
-from cli import cli_args
+from src.cli import cli_args
 
 
 class Database(BaseSettings):

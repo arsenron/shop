@@ -1,6 +1,6 @@
 import fastapi
 from sqlalchemy.ext.asyncio import AsyncSession
-from database import async_session
+from src.database import async_session
 
 
 async def get_db(request: fastapi.Request) -> AsyncSession:

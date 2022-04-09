@@ -5,8 +5,7 @@ import subprocess
 import pytest
 import sys
 
-sys.path.append("../src")
-sys.argv.extend(["--cfg", "cfg.yaml"])
+sys.argv.extend(["--cfg", "integration/cfg.yaml"])
 
 import sqlalchemy.orm
 from pydantic import BaseSettings
@@ -14,9 +13,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
 
-
-from main import app
-from config import config
+from src.main import app
+from src.config import config
 
 test_db = config.database
 
@@ -75,7 +73,8 @@ def create_test_database():
         "-locations=filesystem:.",
         "migrate",
     ]
-    subprocess.run(migration_cmd, cwd="../../database/migrations", check=True)
+    print(os.getcwd())
+    subprocess.run(migration_cmd, cwd="../database/migrations", check=True)
 
 
 create_test_database()

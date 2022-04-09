@@ -3,7 +3,7 @@ from functools import cache
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from config import config
+from src.config import config
 
 Db = AsyncSession
 

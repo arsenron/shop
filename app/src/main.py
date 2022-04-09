@@ -5,9 +5,7 @@ from fastapi import FastAPI, Request
 from importlib import import_module
 from starlette.middleware.sessions import SessionMiddleware
 
-import cli
-import database
-import routers
+from src import cli, database, routers
 
 app = FastAPI()
 SESSION_SECRET_KEY = "my_super_secret_key"
@@ -42,7 +40,7 @@ class Initializer:
         """
         routers_dir = "routers"
         for module_name in routers.modules:
-            module = import_module(f"{routers_dir}.{module_name}")
+            module = import_module(f"src.{routers_dir}.{module_name}")
             self.include_router(module)
 
     def include_router(self, module: ModuleType):

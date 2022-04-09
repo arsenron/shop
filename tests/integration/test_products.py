@@ -20,9 +20,11 @@ def test_overwrite_product(client):
 
 
 def test_delete_product(client):
-    all_products = client.get("/products").json()
-    for product in all_products["products"]:
-        client.delete(f"/products/{product['id']}")
+    new_product = {"name": "product-to-delete", "price": 25}
+    id = client.put("/products", json=new_product).json()["id"]
 
-    all_products = client.get("/products").json()
-    assert all_products["products"] == []
+    assert client.delete(f"/products/{id}").status_code == 200
+
+    products = client.get("/products").json()['products']
+
+    assert any(id != product["id"] for product in products)
