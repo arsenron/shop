@@ -1,17 +1,17 @@
 from sqlalchemy import select, delete
 
 from .base import BaseRepository
-from src.models.core.products import AllProducts, Product, ProductIn
+from src.models.core.products import Products, Product, ProductIn
 from src.models.orm.products import Products as ProductsORM
 
 
 class ProductRepository(BaseRepository):
-    async def get_products(self) -> AllProducts:
+    async def get_products(self) -> Products:
         product_models = (await self.db.execute(
             select(ProductsORM)
         )).all()
         list_of_product_models = [row[0] for row in product_models]
-        return AllProducts(products=[Product.from_orm(m) for m in list_of_product_models])
+        return Products(products=[Product.from_orm(m) for m in list_of_product_models])
 
     async def add_product(self, product_in: ProductIn) -> int:
         """

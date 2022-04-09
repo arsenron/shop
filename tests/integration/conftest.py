@@ -73,7 +73,6 @@ def create_test_database():
         "-locations=filesystem:.",
         "migrate",
     ]
-    print(os.getcwd())
     subprocess.run(migration_cmd, cwd="../database/migrations", check=True)
 
 

@@ -5,7 +5,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 
-class Carts(Base):
+class Cart(Base):
     __tablename__ = 'carts'
 
     id = Column(Integer, primary_key=True)

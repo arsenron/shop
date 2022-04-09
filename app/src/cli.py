@@ -18,7 +18,7 @@ class CliArgs(pydantic.BaseModel):
 
     @validator("cfg", pre=True)
     def set_cfg(cls, cfg):
-        return cfg or "../cfg.yaml"
+        return cfg or "cfg.yaml"
 
 
 @functools.cache

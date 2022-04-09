@@ -16,5 +16,5 @@ class Product(BaseModel):
     price: RoundedFloat
 
 
-class AllProducts(BaseModel):
+class Products(BaseModel):
     products: list[Product]

@@ -1,26 +1,27 @@
-import abc
-from fastapi import HTTPException
+from abc import abstractmethod, ABC
 
-from abc import abstractmethod
+from fastapi import HTTPException
+from fastapi import Depends
+
 from src.database import Db
 from src.deps.common import get_db
 from src.deps.cart import get_cart_id
 from src.repositories.cart import CartRepository
-from fastapi import Depends
 from src.models.core.cart import (
     CartProduct,
     ShoppingCart,
     TotalAmount
 )
-from src.models.orm.cart import Carts
+from src.models import orm
+import src.models.orm.cart
 from .calculations.calculations import AbstractShoppingCartCalculator, ShoppingCartCalculator
 from .calculations.rules import ShoppingCartError
-from .products import IProductService, ProductService
+from .products import ProductService
 
 
-class ICartService(abc.ABC):
+class ICartService(ABC):
     @abstractmethod
-    async def add_product(self, product_id: int, amount: int) -> int:
+    async def add_product(self, product_id: int, amount: int) -> TotalAmount:
         pass
 
     @abstractmethod
@@ -32,7 +33,7 @@ class CartService(ICartService):
     def __init__(
         self,
         db: Db = Depends(get_db),
-        product_service: IProductService = Depends(ProductService),
+        product_service: ProductService = Depends(),
         cart_id=Depends(get_cart_id),
     ):
         self.product_service = product_service
@@ -68,7 +69,7 @@ class CartService(ICartService):
             total_amount=total_amount, cart_products=cart_orm.cart_products
         )
 
-    async def get_cart_orm(self) -> Carts:
+    async def get_cart_orm(self) -> orm.cart.Cart:
         cart_orm = await self.cart_repo.get_cart(self.cart_id)
         if not cart_orm:
             cart_orm = await self.cart_repo.create_cart(self.cart_id)
