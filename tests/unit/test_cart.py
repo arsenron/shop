@@ -32,3 +32,9 @@ def test_discount_rule():
     discount_rule = DiscountRule(discount_to_apply=1, total_sum=20)
     discount_rule.apply_rule(shopping_cart)
     assert shopping_cart.total_amount == 149
+
+    shopping_cart = ShoppingCart()
+    shopping_cart.add_product(CartProduct(amount=3, product=Product(id=2, name="orange", price=6)))
+    discount_rule = DiscountRule(discount_to_apply=1, total_sum=20)
+    discount_rule.apply_rule(shopping_cart)
+    assert shopping_cart.total_amount == 18
