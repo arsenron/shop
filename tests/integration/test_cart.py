@@ -10,7 +10,7 @@ def fill_cart(client):
     return bread_id, melon_id
 
 
-def test_cart(client):
+def test_cart_content(client):
     fill_cart(client)
 
     shopping_cart = client.post("/cart/place").json()

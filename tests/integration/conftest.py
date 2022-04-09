@@ -2,16 +2,12 @@ import asyncio
 import os
 import subprocess
 
-import pytest
 import sys
+sys.argv.extend(["--cfg", "integration/cfg.yaml"])  # passing cfg as it is passed from command line
 
-sys.argv.extend(["--cfg", "integration/cfg.yaml"])
-
-import sqlalchemy.orm
 from pydantic import BaseSettings
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
+import pytest
 
 from src.main import app
 from src.config import config
@@ -78,18 +74,11 @@ def create_test_database():
 
 create_test_database()
 
-engine = create_engine(
-    f"postgresql+pg8000://{test_db.user}:{test_db.password}@{test_db.host}/{test_db.name}",
-    pool_size=test_db.pool_size,
-    max_overflow=5,
-)
-Session = sessionmaker(engine)
-
 
 @pytest.fixture
 def client() -> TestClient:
     """
-    Authorized client
+    New client per test case
     """
     with TestClient(
         app=app,
@@ -97,24 +86,3 @@ def client() -> TestClient:
     ) as _client:
         yield _client
 
-
-@pytest.fixture
-def test_data(client) -> list[dict]:
-    products = [
-        {"name": "melon", "price": 5},
-        {"name": "orange", "price": 1.5},
-        {"name": "bread", "price": 3},
-        {"name": "watermelon", "price": 2},
-        {"name": "milk", "price": 0.35},
-    ]
-    for product in products:
-        client.put("/products", json=product)
-    return products
-
-
-@pytest.fixture
-def db() -> sqlalchemy.orm.Session:
-    session = Session()
-    yield session
-    session.commit()
-    session.close()
