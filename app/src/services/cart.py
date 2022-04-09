@@ -14,7 +14,7 @@ from src.models.core.cart import (
 )
 from src.models import orm
 import src.models.orm.cart
-from .calculations.calculations import AbstractShoppingCartCalculator, ShoppingCartCalculator
+from .calculations.calculations import ShoppingCartCalculator
 from .calculations.rules import ShoppingCartError
 from .products import ProductService
 
@@ -47,7 +47,7 @@ class CartService(ICartService):
         shopping_cart = ShoppingCart()
         for product in cart_orm.cart_products:
             shopping_cart.add_product(CartProduct.from_orm(product))
-        shopping_cart_calculator: AbstractShoppingCartCalculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
+        shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
             total_amount = shopping_cart_calculator.calculate_cart()
         except ShoppingCartError as exc:
@@ -59,7 +59,7 @@ class CartService(ICartService):
         shopping_cart = ShoppingCart()
         for product in cart_orm.cart_products:
             shopping_cart.add_product(CartProduct.from_orm(product))
-        shopping_cart_calculator: AbstractShoppingCartCalculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
+        shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
             total_amount = shopping_cart_calculator.calculate_cart()
         except ShoppingCartError as exc:

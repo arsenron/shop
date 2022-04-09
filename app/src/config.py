@@ -17,9 +17,9 @@ class Database(BaseSettings):
 
 
 class CalculationRules(BaseSettings):
-    SameKindRule: bool = Field(False, alias="same_kind_rule")
-    ExceedingRule: bool = Field(False, alias="exceeding_rule")
-    DiscountRule: bool = Field(False, alias="discount_rule")
+    same_kind_rule: bool = False
+    exceeding_rule: bool = False
+    discount_rule: bool = False
 
 
 class Config(BaseSettings):
@@ -30,7 +30,6 @@ class Config(BaseSettings):
         extra = Extra.allow
         env_nested_delimiter = "_"
         env_file_encoding = "utf-8"
-        allow_population_by_field_name = True
 
         @classmethod
         def customise_sources(
