@@ -9,12 +9,12 @@ CREATE TABLE products
 CREATE TABLE carts
 (
     id         SERIAL PRIMARY KEY ,
-    cart_id text NOT NULL ,
+    session_id text NOT NULL ,
     created_at timestamp NOT NULL DEFAULT now(),
     is_placed  bool NOT NULL DEFAULT false
 );
 
-CREATE UNIQUE INDEX ON carts (cart_id, is_placed) WHERE is_placed = false;
+CREATE UNIQUE INDEX ON carts (session_id, is_placed) WHERE is_placed = false;
 
 
 CREATE TABLE cart_products

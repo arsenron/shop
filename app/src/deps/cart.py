@@ -5,12 +5,12 @@ import uuid
 KEY = "shop_session"
 
 
-def get_cart_id(request: Request) -> str:
+def get_session_id(request: Request) -> str:
     session = request.session
-    cart_id = session.get(KEY)
-    if not cart_id:
-        cart_id = str(uuid.uuid4())
-        session[KEY] = cart_id
-        return cart_id
+    session_id = session.get(KEY)
+    if not session_id:
+        session_id = str(uuid.uuid4())
+        session[KEY] = session_id
+        return session_id
     else:
-        return cart_id
+        return session_id

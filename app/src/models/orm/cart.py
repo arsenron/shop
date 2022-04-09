@@ -9,7 +9,7 @@ class Cart(Base):
     __tablename__ = 'carts'
 
     id = Column(Integer, primary_key=True)
-    cart_id = Column(Text, nullable=False)
+    session_id = Column(Text, nullable=False)
     created_at = Column(DateTime, nullable=False, server_default=text("now()"))
     is_placed = Column(Boolean, nullable=False, server_default=text("false"))
 

@@ -6,10 +6,10 @@ from src.models.orm.cart import Cart, CartProducts
 
 
 class CartRepository(BaseRepository):
-    async def get_cart(self, cart_id: str) -> Cart | None:
+    async def get_cart(self, session_id: str) -> Cart | None:
         cart = await self.db.scalar(
             select(Cart)
-            .filter(Cart.cart_id == cart_id)
+            .filter(Cart.session_id == session_id)
             .filter(Cart.is_placed == False)
         )
         if not cart:
@@ -17,8 +17,8 @@ class CartRepository(BaseRepository):
         else:
             return cart
 
-    async def create_cart(self, cart_id: str) -> Cart:
-        empty_cart = Cart(cart_id=cart_id, cart_products=[])
+    async def create_cart(self, session_id: str) -> Cart:
+        empty_cart = Cart(session_id=session_id, cart_products=[])
         self.db.add(
             empty_cart
         )

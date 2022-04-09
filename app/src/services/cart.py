@@ -5,7 +5,7 @@ from fastapi import Depends
 
 from src.database import Db
 from src.deps.common import get_db
-from src.deps.cart import get_cart_id
+from src.deps.cart import get_session_id
 from src.repositories.cart import CartRepository
 from src.models.core.cart import (
     CartProduct,
@@ -38,11 +38,11 @@ class CartService(ICartService):
         self,
         db: Db = Depends(get_db),
         product_service: ProductService = Depends(),
-        cart_id=Depends(get_cart_id),
+        session_id=Depends(get_session_id),
     ):
         self.product_service = product_service
         self.cart_repo = CartRepository(db)
-        self.cart_id = cart_id
+        self.session_id = session_id
 
     async def get_cart(self) -> ShoppingCart:
         cart = await self.get_cart_orm()
@@ -62,9 +62,9 @@ class CartService(ICartService):
         return shopping_cart
 
     async def get_cart_orm(self) -> orm.cart.Cart:
-        cart = await self.cart_repo.get_cart(self.cart_id)
+        cart = await self.cart_repo.get_cart(self.session_id)
         if not cart:
-            cart = await self.cart_repo.create_cart(self.cart_id)
+            cart = await self.cart_repo.create_cart(self.session_id)
         return cart
 
     async def create_shopping_cart(self, cart_orm: orm.cart.Cart) -> ShoppingCart:
