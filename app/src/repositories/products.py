@@ -13,7 +13,7 @@ class ProductRepository(BaseRepository):
         list_of_product_models = [row[0] for row in product_models]
         return AllProducts(products=[Product.from_orm(m) for m in list_of_product_models])
 
-    async def add_product(self, product_in: ProductIn):
+    async def add_product(self, product_in: ProductIn) -> int:
         """
         Updates product in case of matching name
         """
@@ -22,9 +22,12 @@ class ProductRepository(BaseRepository):
         )
         if existing_product:
             existing_product.price = product_in.price
+            return existing_product.id
         else:
             product = ProductsORM(name=product_in.name, price=product_in.price)
             self.db.add(product)
+            await self.db.flush()
+            return product.id
 
     async def remove_product(self, product_id: int):
         await self.db.execute(

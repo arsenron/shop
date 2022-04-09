@@ -2,6 +2,7 @@ from typing import Any
 
 import yaml
 from pydantic import BaseSettings, Extra
+from cli import cli_args
 
 
 class Database(BaseSettings):
@@ -42,7 +43,7 @@ class Config(BaseSettings):
 
 
 def yaml_config_settings_source(_settings: BaseSettings) -> dict[str, Any]:
-    with open("../cfg.yaml", "rb") as f:
+    with open(cli_args.cfg, "rb") as f:
         cfg = yaml.safe_load(f)
         return dict(database=cfg["database"])
 

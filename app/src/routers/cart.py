@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, Query
 from src.services.cart import ICartService, CartService
-from src.models.core.cart import ShoppingCart
+from src.models.core.cart import ShoppingCart, TotalAmount
 
 router = APIRouter(prefix="/cart")
 
 
-@router.post("/add/{product_id}")
+@router.post("/add/{product_id}", response_model=TotalAmount)
 async def add_to_cart(
     product_id: int, amount: int = Query(1, ge=0), svc: ICartService = Depends(CartService)
 ):

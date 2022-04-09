@@ -1,6 +1,10 @@
 from pydantic import conint
-from commons import BaseModel, RoundedFloat
+from .commons import BaseModel, RoundedFloat
 from src.models.core.products import Product
+
+
+class TotalAmount(BaseModel):
+    total_amount: RoundedFloat
 
 
 class CartProduct(BaseModel):

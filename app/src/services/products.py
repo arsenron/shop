@@ -1,7 +1,7 @@
 import abc
 from fastapi import HTTPException
 
-from src.models.core.products import Product, AllProducts, ProductIn
+from src.models.core.products import Product, AllProducts, ProductIn, ProductId
 from abc import abstractmethod
 from src.database import Db
 from src.deps.common import get_db
@@ -20,7 +20,7 @@ class IProductService(abc.ABC):
         pass
 
     @abstractmethod
-    async def create_product(self, product: ProductIn):
+    async def create_product(self, product: ProductIn) -> ProductId:
         pass
 
     @abstractmethod
@@ -43,8 +43,9 @@ class ProductService(IProductService):
         else:
             return product
 
-    async def create_product(self, product_in: ProductIn):
-        await self.product_repo.add_product(product_in)
+    async def create_product(self, product_in: ProductIn) -> ProductId:
+        product_id = await self.product_repo.add_product(product_in)
+        return ProductId(id=product_id)
 
     async def remove_product(self, id: int):
         await self.product_repo.remove_product(id)
