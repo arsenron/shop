@@ -14,7 +14,9 @@ def test_cart_content(client):
     fill_cart(client)
 
     shopping_cart = client.post("/cart/place").json()
-    products = sorted(shopping_cart["cart_products"], key=lambda p: p["product"]["name"])
+    products = sorted(
+        shopping_cart["cart_products"], key=lambda p: p["product"]["name"]
+    )
     match products:
         case [
             {"amount": 2, "product": {"name": "bread"}},
@@ -23,6 +25,7 @@ def test_cart_content(client):
             pass
         case _:
             raise ValueError("shopping cart does not match")
+
 
 def test_cart_is_empty_after_it_is_placed(client):
     shopping_cart = client.post("/cart/place").json()

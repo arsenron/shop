@@ -25,6 +25,6 @@ def test_delete_product(client):
 
     assert client.delete(f"/products/{id}").status_code == 200
 
-    products = client.get("/products").json()['products']
+    products = client.get("/products").json()["products"]
 
     assert any(id != product["id"] for product in products)

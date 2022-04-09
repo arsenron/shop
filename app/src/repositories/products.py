@@ -7,9 +7,7 @@ from src.models.orm.products import Products as ProductsORM
 
 class ProductRepository(BaseRepository):
     async def get_products(self) -> Products:
-        product_models = (await self.db.execute(
-            select(ProductsORM)
-        )).all()
+        product_models = (await self.db.execute(select(ProductsORM))).all()
         list_of_product_models = [row[0] for row in product_models]
         return Products(products=[Product.from_orm(m) for m in list_of_product_models])
 
@@ -30,9 +28,7 @@ class ProductRepository(BaseRepository):
             return product.id
 
     async def remove_product(self, product_id: int):
-        await self.db.execute(
-            delete(ProductsORM).where(ProductsORM.id == product_id)
-        )
+        await self.db.execute(delete(ProductsORM).where(ProductsORM.id == product_id))
 
     async def get_product_by_id(self, id: int) -> Product | None:
         product_orm = await self.db.scalar(

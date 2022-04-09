@@ -28,10 +28,7 @@ def get_cli_args() -> CliArgs:
         "--bind",
         required=False,
     )
-    parser.add_argument(
-        "--cfg",
-        required=False
-    )
+    parser.add_argument("--cfg", required=False)
     args, _unknown = parser.parse_known_args()
     return CliArgs(bind=args.bind, cfg=args.cfg)
 

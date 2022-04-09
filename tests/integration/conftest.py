@@ -3,7 +3,10 @@ import os
 import subprocess
 
 import sys
-sys.argv.extend(["--cfg", "integration/cfg.yaml"])  # passing cfg as it is passed from command line
+
+sys.argv.extend(
+    ["--cfg", "integration/cfg.yaml"]
+)  # passing cfg as it is passed from command line
 
 from pydantic import BaseSettings
 from starlette.testclient import TestClient
@@ -85,4 +88,3 @@ def client() -> TestClient:
         base_url="http://test",
     ) as _client:
         yield _client
-

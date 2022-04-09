@@ -1,5 +1,6 @@
-from fastapi import Request
 import uuid
+
+from fastapi import Request
 
 
 KEY = "shop_session"

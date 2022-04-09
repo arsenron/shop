@@ -7,11 +7,7 @@ from src.database import Db
 from src.deps.common import get_db
 from src.deps.cart import get_session_id
 from src.repositories.cart import CartRepository
-from src.models.core.cart import (
-    CartProduct,
-    ShoppingCart,
-    TotalAmount
-)
+from src.models.core.cart import CartProduct, ShoppingCart, TotalAmount
 from src.models import orm
 import src.models.orm.cart
 from .calculations.calculations import ShoppingCartCalculator
@@ -69,12 +65,12 @@ class CartService(ICartService):
 
     async def create_shopping_cart(self, cart_orm: orm.cart.Cart) -> ShoppingCart:
         shopping_cart = ShoppingCart()
-        for product in cart_orm.cart_products:
-            shopping_cart.add_product(CartProduct.from_orm(product))
+        shopping_cart.add_products(
+            [CartProduct.from_orm(product) for product in cart_orm.cart_products]
+        )
         shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
             shopping_cart_calculator.calculate_cart()
         except ShoppingCartError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         return shopping_cart
-
