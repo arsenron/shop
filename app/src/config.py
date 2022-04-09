@@ -1,7 +1,7 @@
 from typing import Any
 
 import yaml
-from pydantic import BaseSettings, Extra, Field
+from pydantic import BaseSettings, Extra, validator
 from src.cli import cli_args
 
 
@@ -24,7 +24,11 @@ class CalculationRules(BaseSettings):
 
 class Config(BaseSettings):
     database: Database
-    calculation_rules: CalculationRules = CalculationRules()
+    calculation_rules: CalculationRules
+
+    @validator('calculation_rules', pre=True)
+    def set_name(cls, v):
+        return v or CalculationRules()
 
     class Config:
         extra = Extra.allow
@@ -52,8 +56,7 @@ class Config(BaseSettings):
 def yaml_config_settings_source(_settings: BaseSettings) -> dict[str, Any]:
     with open(cli_args.cfg, "rb") as f:
         cfg = yaml.safe_load(f)
-        return dict(database=cfg["database"], calculation_rules=cfg["calculation_rules"])
+        return dict(database=cfg["database"], calculation_rules=cfg.get("calculation_rules"))
 
 
 config = Config()
-print(config)

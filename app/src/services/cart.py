@@ -25,6 +25,10 @@ class ICartService(ABC):
         pass
 
     @abstractmethod
+    async def get_cart(self) -> ShoppingCart:
+        pass
+
+    @abstractmethod
     async def place_order(self) -> ShoppingCart:
         pass
 
@@ -39,6 +43,20 @@ class CartService(ICartService):
         self.product_service = product_service
         self.cart_repo = CartRepository(db)
         self.cart_id = cart_id
+
+    async def get_cart(self) -> ShoppingCart:
+        cart_orm = await self.get_cart_orm()
+        shopping_cart = ShoppingCart()
+        for product in cart_orm.cart_products:
+            shopping_cart.add_product(CartProduct.from_orm(product))
+        shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
+        try:
+            total_amount = shopping_cart_calculator.calculate_cart()
+        except ShoppingCartError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+        return ShoppingCart(
+            total_amount=total_amount, cart_products=cart_orm.cart_products
+        )
 
     async def add_product(self, product_id: int, amount: int) -> TotalAmount:
         await self.product_service.get_product_by_id(product_id)  # todo: ???

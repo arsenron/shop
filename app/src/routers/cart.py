@@ -5,6 +5,15 @@ from src.models.core.cart import ShoppingCart, TotalAmount
 router = APIRouter(prefix="/cart", tags=["cart"])
 
 
+@router.get(
+    "",
+    response_model=ShoppingCart,
+    summary="Current cart",
+)
+async def get_cart(service: ICartService = Depends(CartService)):
+    return await service.get_cart()
+
+
 @router.put(
     "/store/{product_id}",
     response_model=TotalAmount,
