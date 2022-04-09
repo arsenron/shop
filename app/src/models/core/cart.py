@@ -16,7 +16,7 @@ class ShoppingCart(BaseModel):
     cart_products: list[CartProduct] = []
     total_amount: RoundedFloat = 0
 
-    def add_product(self, cart_product: CartProduct) -> int:
+    def add_product(self, cart_product: CartProduct):
         cost_of_products = cart_product.product.price * cart_product.amount
         for i, existing_cart_product in enumerate(self.cart_products):
             if existing_cart_product.product.id == cart_product.product.id:
@@ -26,3 +26,7 @@ class ShoppingCart(BaseModel):
         else:
             self.cart_products.append(cart_product)
             self.total_amount += cost_of_products
+
+    def add_products(self, products: list[CartProduct]):
+        for product in products:
+            self.add_product(product)

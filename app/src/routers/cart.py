@@ -5,7 +5,7 @@ from src.models.core.cart import ShoppingCart, TotalAmount
 router = APIRouter(prefix="/cart")
 
 
-@router.post("/add/{product_id}", response_model=TotalAmount)
+@router.put("/add/{product_id}", response_model=TotalAmount)
 async def add_to_cart(
     product_id: int, amount: int = Query(1, ge=0), svc: ICartService = Depends(CartService)
 ):

@@ -1,7 +1,3 @@
-DROP TABLE cart_products;
-DROP TABLE carts;
-DROP TABLE products CASCADE;
-
 CREATE TABLE products
 (
     id    SERIAL PRIMARY KEY,

@@ -101,6 +101,20 @@ def client() -> TestClient:
 
 
 @pytest.fixture
+def test_data(client) -> list[dict]:
+    products = [
+        {"name": "melon", "price": 5},
+        {"name": "orange", "price": 1.5},
+        {"name": "bread", "price": 3},
+        {"name": "watermelon", "price": 2},
+        {"name": "milk", "price": 0.35},
+    ]
+    for product in products:
+        client.put("/products", json=product)
+    return products
+
+
+@pytest.fixture
 def db() -> sqlalchemy.orm.Session:
     session = Session()
     yield session

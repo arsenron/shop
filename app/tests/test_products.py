@@ -3,6 +3,9 @@ def test_adding_products(client):
     id = client.put("/products", json=new_product).json()["id"]
     assert client.get(f"/products/{id}").status_code == 200
 
+    product_without_price = {"name": "product-without-price"}
+    assert client.put("/products", json=product_without_price).status_code != 200
+
 
 def test_overwrite_product(client):
     some_very_unknown_product = "some-very-unknown-product"
