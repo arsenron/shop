@@ -7,6 +7,8 @@ def fill_cart(client):
     assert client.put(f"/cart/add/{bread_id}").status_code == 200
     assert client.put(f"/cart/add/{melon_id}?amount=2").status_code == 200
 
+    return bread_id, melon_id
+
 
 def test_cart(client):
     fill_cart(client)
@@ -33,3 +35,11 @@ def test_cart_is_empty_after_it_is_placed(client):
 
     shopping_cart = client.post("/cart/place").json()
     assert shopping_cart["cart_products"] == []
+
+
+def test_remove_from_cart(client):
+    bread_id, melon_id = fill_cart(client)
+
+    client.put(f"/cart/add/{bread_id}?amount=0")
+    total_amount = client.put(f"/cart/add/{melon_id}?amount=0").json()["total_amount"]
+    assert total_amount == 0
