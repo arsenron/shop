@@ -1,11 +1,12 @@
 import asyncio
 import os
+import pathlib
 import subprocess
 
 import sys
-
+current_file_dir = pathlib.Path(os.path.dirname(os.path.realpath(__file__)))
 sys.argv.extend(
-    ["--cfg", "integration/cfg.yaml"]
+    ["--cfg", str(current_file_dir.joinpath("cfg.yaml"))]
 )  # passing cfg as it is passed from command line
 
 from pydantic import BaseSettings
@@ -24,9 +25,6 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-
-pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture(scope="session")
@@ -72,7 +70,9 @@ def create_test_database():
         "-locations=filesystem:.",
         "migrate",
     ]
-    subprocess.run(migration_cmd, cwd="../../database/migrations", check=True)
+    migrations_path = current_file_dir.parents[2].joinpath("database/migrations")
+    print(migrations_path)
+    subprocess.run(migration_cmd, cwd=migrations_path, check=True)
 
 
 create_test_database()
