@@ -13,7 +13,7 @@ def fill_cart(client):
 def test_cart_content(client):
     fill_cart(client)
 
-    shopping_cart = client.post("/cart/place").json()
+    shopping_cart = client.get("/cart").json()
     products = sorted(
         shopping_cart["cart_products"], key=lambda p: p["product"]["name"]
     )
