@@ -27,3 +27,6 @@ class ProductService:
 
     async def remove_product(self, id: int):
         await self.product_repo.remove_product(id)
+
+    async def validate_if_product_exists(self, product_id: int):
+        await self.get_product_by_id(product_id)

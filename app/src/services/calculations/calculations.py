@@ -17,7 +17,6 @@ class ShoppingCartCalculator:
             calculation_rules.append(ExceedingRule())
         return calculation_rules
 
-    def calculate_cart(self) -> float:
+    def calculate_cart(self):
         for calculation_rule in self.select_calculation_rules():
             calculation_rule.apply_rule(self.shopping_cart)
-        return self.shopping_cart.total_amount

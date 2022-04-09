@@ -45,50 +45,36 @@ class CartService(ICartService):
         self.cart_id = cart_id
 
     async def get_cart(self) -> ShoppingCart:
-        cart_orm = await self.get_cart_orm()
-        shopping_cart = ShoppingCart()
-        for product in cart_orm.cart_products:
-            shopping_cart.add_product(CartProduct.from_orm(product))
-        shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
-        try:
-            total_amount = shopping_cart_calculator.calculate_cart()
-        except ShoppingCartError as exc:
-            raise HTTPException(status_code=400, detail=str(exc))
-        return ShoppingCart(
-            total_amount=total_amount, cart_products=cart_orm.cart_products
-        )
+        cart = await self.get_cart_orm()
+        return await self.create_shopping_cart(cart)
 
     async def add_product(self, product_id: int, amount: int) -> TotalAmount:
-        await self.product_service.get_product_by_id(product_id)  # todo: ???
-        cart_orm = await self.get_cart_orm()
-        await self.cart_repo.add_product(cart_orm, product_id, amount)
-        shopping_cart = ShoppingCart()
-        for product in cart_orm.cart_products:
-            shopping_cart.add_product(CartProduct.from_orm(product))
-        shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
-        try:
-            total_amount = shopping_cart_calculator.calculate_cart()
-        except ShoppingCartError as exc:
-            raise HTTPException(status_code=400, detail=str(exc))
-        return TotalAmount(total_amount=total_amount)
+        await self.product_service.validate_if_product_exists(product_id)
+        cart = await self.get_cart_orm()
+        await self.cart_repo.add_product(cart, product_id, amount)
+        shopping_cart = await self.create_shopping_cart(cart)
+        return TotalAmount(total_amount=shopping_cart.total_amount)
 
     async def place_order(self) -> ShoppingCart:
-        cart_orm = await self.get_cart_orm()
+        cart = await self.get_cart_orm()
+        shopping_cart = await self.create_shopping_cart(cart)
+        await self.cart_repo.delete_cart(cart)
+        return shopping_cart
+
+    async def get_cart_orm(self) -> orm.cart.Cart:
+        cart = await self.cart_repo.get_cart(self.cart_id)
+        if not cart:
+            cart = await self.cart_repo.create_cart(self.cart_id)
+        return cart
+
+    async def create_shopping_cart(self, cart_orm: orm.cart.Cart) -> ShoppingCart:
         shopping_cart = ShoppingCart()
         for product in cart_orm.cart_products:
             shopping_cart.add_product(CartProduct.from_orm(product))
         shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
-            total_amount = shopping_cart_calculator.calculate_cart()
+            shopping_cart_calculator.calculate_cart()
         except ShoppingCartError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
-        await self.cart_repo.delete_order(cart_orm)
-        return ShoppingCart(
-            total_amount=total_amount, cart_products=cart_orm.cart_products
-        )
+        return shopping_cart
 
-    async def get_cart_orm(self) -> orm.cart.Cart:
-        cart_orm = await self.cart_repo.get_cart(self.cart_id)
-        if not cart_orm:
-            cart_orm = await self.cart_repo.create_cart(self.cart_id)
-        return cart_orm

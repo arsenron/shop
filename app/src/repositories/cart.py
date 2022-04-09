@@ -37,5 +37,5 @@ class CartRepository(BaseRepository):
         await self.db.execute(stmt)
         await self.db.refresh(cart)
 
-    async def delete_order(self, cart: Cart):
+    async def delete_cart(self, cart: Cart):
         cart.is_placed = True
