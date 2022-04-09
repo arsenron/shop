@@ -1,7 +1,7 @@
 from typing import Any
 
 import yaml
-from pydantic import BaseSettings, Extra
+from pydantic import BaseSettings, Extra, Field
 from src.cli import cli_args
 
 
@@ -16,13 +16,21 @@ class Database(BaseSettings):
     max_inactive_connection_lifetime: int = 0
 
 
+class CalculationRules(BaseSettings):
+    SameKindRule: bool = Field(False, alias="same_kind_rule")
+    ExceedingRule: bool = Field(False, alias="exceeding_rule")
+    DiscountRule: bool = Field(False, alias="discount_rule")
+
+
 class Config(BaseSettings):
     database: Database
+    calculation_rules: CalculationRules = CalculationRules()
 
     class Config:
         extra = Extra.allow
         env_nested_delimiter = "_"
         env_file_encoding = "utf-8"
+        allow_population_by_field_name = True
 
         @classmethod
         def customise_sources(
@@ -45,7 +53,8 @@ class Config(BaseSettings):
 def yaml_config_settings_source(_settings: BaseSettings) -> dict[str, Any]:
     with open(cli_args.cfg, "rb") as f:
         cfg = yaml.safe_load(f)
-        return dict(database=cfg["database"])
+        return dict(database=cfg["database"], calculation_rules=cfg["calculation_rules"])
 
 
 config = Config()
+print(config)
