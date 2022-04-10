@@ -28,6 +28,7 @@ class ProductRepository(BaseRepository):
         )
         if existing_product:
             existing_product.price = product_in.price
+            existing_product.is_deleted = False
             return existing_product.id
         else:
             product = orm.products.Products(name=product_in.name, price=product_in.price)
