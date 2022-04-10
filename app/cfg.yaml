@@ -9,6 +9,10 @@ database:
   max_inactive_connection_lifetime: 0
 
 calculation_rules:
-  same_kind_rule: true
-  discount_rule: true
-  exceeding_rule: true
+  same_kind_rule:
+    free_product: 5
+  discount_rule:
+    discount_amount: 1
+    total_sum: 20
+  exceeding_rule:
+    total_sum: 100

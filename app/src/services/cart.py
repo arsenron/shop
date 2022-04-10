@@ -10,7 +10,7 @@ from src.repositories.cart import CartRepository
 from src.models.core.cart import CartProduct, ShoppingCart, TotalAmount
 from src.models import orm
 import src.models.orm.cart
-from .calculations.calculations import ShoppingCartCalculator
+from .calculations.cart_calculator import ShoppingCartCalculator
 from .calculations.rules import ShoppingCartError
 from .products import ProductService
 

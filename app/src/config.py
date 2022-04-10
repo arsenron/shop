@@ -4,6 +4,7 @@ import yaml
 from pydantic import BaseSettings, Extra, validator
 
 from src.cli import cli_args
+from src.services.calculations.rules import DiscountRule, SameKindRule, ExceedingRule
 
 
 class Database(BaseSettings):
@@ -18,9 +19,9 @@ class Database(BaseSettings):
 
 
 class CalculationRules(BaseSettings):
-    same_kind_rule: bool = False
-    exceeding_rule: bool = False
-    discount_rule: bool = False
+    same_kind_rule: SameKindRule = None
+    exceeding_rule: ExceedingRule = None
+    discount_rule: DiscountRule = None
 
 
 class Config(BaseSettings):

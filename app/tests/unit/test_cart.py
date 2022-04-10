@@ -26,7 +26,7 @@ def test_same_kind_rule():
     shopping_cart.add_product(
         CartProduct(amount=5, product=Product(id=2, name="orange", price=4))
     )
-    same_kind_rule = SameKindRule(every_nth_free_product=5)
+    same_kind_rule = SameKindRule(free_product=5)
     same_kind_rule.apply_rule(shopping_cart)
     assert shopping_cart.total_amount == 16
 
@@ -37,7 +37,7 @@ def test_exceeding_rule():
         CartProduct(amount=3, product=Product(id=2, name="orange", price=50))
     )
     with pytest.raises(ShoppingCartError):
-        ExceedingRule(maximum_amount=100).apply_rule(shopping_cart)
+        ExceedingRule(total_sum=100).apply_rule(shopping_cart)
 
 
 def test_discount_rule():

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from pydantic import BaseModel
+
 from src.models.core.cart import ShoppingCart
 
 
@@ -16,32 +18,29 @@ class ICalculationRule(ABC):
         pass
 
 
-class SameKindRule(ICalculationRule):
-    def __init__(self, every_nth_free_product: int = 5):
-        self.every_nth_free_product = every_nth_free_product
+class SameKindRule(ICalculationRule, BaseModel):
+    free_product: int = 5
 
     def apply_rule(self, shopping_cart: ShoppingCart):
         for cart_product in shopping_cart.cart_products:
-            number_of_free_products = cart_product.amount // self.every_nth_free_product
+            number_of_free_products = cart_product.amount // self.free_product
             shopping_cart.total_amount -= (
                 number_of_free_products * cart_product.product.price
             )
 
 
-class DiscountRule(ICalculationRule):
-    def __init__(self, discount_to_apply: int = 1, total_sum: int = 20):
-        self.discount_to_apply = discount_to_apply
-        self.total_sum = total_sum
+class DiscountRule(ICalculationRule, BaseModel):
+    discount_amount = 1
+    total_sum = 20
 
     def apply_rule(self, shopping_cart: ShoppingCart):
         if shopping_cart.total_amount > self.total_sum:
-            shopping_cart.total_amount -= self.discount_to_apply
+            shopping_cart.total_amount -= self.discount_amount
 
 
-class ExceedingRule(ICalculationRule):
-    def __init__(self, maximum_amount: int = 100):
-        self.maximum_amount = maximum_amount
+class ExceedingRule(ICalculationRule, BaseModel):
+    total_sum: int = 100
 
     def apply_rule(self, shopping_cart: ShoppingCart):
-        if shopping_cart.total_amount > self.maximum_amount:
-            raise ShoppingCartError(f"total amount cannot exceed {self.maximum_amount}")
+        if shopping_cart.total_amount > self.total_sum:
+            raise ShoppingCartError(f"total amount cannot exceed {self.total_sum}")
