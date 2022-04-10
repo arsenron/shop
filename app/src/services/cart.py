@@ -70,7 +70,7 @@ class CartService(ICartService):
         )
         shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
-            shopping_cart_calculator.calculate_cart()
+            shopping_cart_calculator.apply_calculation_rules()
         except ShoppingCartError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         return shopping_cart

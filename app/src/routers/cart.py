@@ -18,9 +18,8 @@ async def get_cart(service: ICartService = Depends(CartService)):
 @router.put(
     "/store/{product_id}",
     response_model=TotalAmount,
-    summary="Stores a product in a cart",
-    description="Creates a new cart in case of first interacting with the endpoint "
-    "and stores products in it. You can control the number of items with "
+    summary="Stores products in a cart",
+    description="You can control the number of items with "
     "the ```amount``` query parameter. For example, to remove completely all the products"
     " of the same kind, send ```amount``` equal to 0.",
     response_description="Total amount for the cart",
