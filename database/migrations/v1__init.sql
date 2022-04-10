@@ -2,7 +2,8 @@ CREATE TABLE products
 (
     id    SERIAL PRIMARY KEY,
     name  text NOT NULL UNIQUE,
-    price real NOT NULL
+    price real NOT NULL,
+    is_deleted bool DEFAULT false
 );
 
 
