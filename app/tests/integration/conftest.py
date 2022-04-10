@@ -23,12 +23,25 @@ class Settings(BaseSettings):
     db_superuser: str = "postgres"
     db_superuser_password: str = "postgres"
 
+    @classmethod
+    def customise_sources(
+        cls,
+        init_settings,
+        env_settings,
+        file_secret_settings,
+    ):
+        return (
+            env_settings,
+            init_settings,
+            file_secret_settings,
+        )
+
 
 settings = Settings()
 
 
 @pytest.fixture(scope="session")
-def event_loop(request):
+def event_loop(_request):
     """Create an instance of the default event loop for each test case."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
@@ -36,7 +49,7 @@ def event_loop(request):
 
 
 def create_test_database():
-    pgpass_loc = "/tmp/.pgpass"
+    pgpass_loc = pathlib.Path("/tmp/.pgpass")
     with open(pgpass_loc, "w") as f:
         os.chmod(pgpass_loc, 0o600)
         f.write(
@@ -71,7 +84,6 @@ def create_test_database():
         "migrate",
     ]
     migrations_path = current_file_dir.parents[2].joinpath("database/migrations")
-    print(migrations_path)
     subprocess.run(migration_cmd, cwd=migrations_path, check=True)
 
 
