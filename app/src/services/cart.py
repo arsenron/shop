@@ -65,9 +65,7 @@ class CartService(ICartService):
 
     async def create_shopping_cart(self, cart_orm: orm.cart.Cart) -> ShoppingCart:
         shopping_cart = ShoppingCart()
-        shopping_cart.add_products(
-            [CartProduct.from_orm(product) for product in cart_orm.cart_products]
-        )
+        shopping_cart.add_products([CartProduct.from_orm(product) for product in cart_orm.cart_products])
         shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
             shopping_cart_calculator.apply_calculation_rules()

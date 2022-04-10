@@ -14,9 +14,7 @@ def test_cart_content(client):
     fill_cart(client)
 
     shopping_cart = client.get("/cart").json()
-    products = sorted(
-        shopping_cart["cart_products"], key=lambda p: p["product"]["name"]
-    )
+    products = sorted(shopping_cart["cart_products"], key=lambda p: p["product"]["name"])
     match products:
         case [
             {"amount": 2, "product": {"name": "bread"}},

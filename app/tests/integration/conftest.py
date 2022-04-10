@@ -3,6 +3,7 @@ import pathlib
 import subprocess
 
 import sys
+
 current_file_dir = pathlib.Path(os.path.dirname(os.path.realpath(__file__)))
 sys.argv.extend(
     ["--cfg", str(current_file_dir.joinpath("cfg.yaml"))]

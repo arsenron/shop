@@ -10,8 +10,7 @@ class ProductRepository(BaseRepository):
     async def get_products(self) -> Products:
         products_orm = (
             await self.db.execute(
-                select(orm.products.Products)
-                    .filter(orm.products.Products.is_deleted == False)
+                select(orm.products.Products).filter(orm.products.Products.is_deleted == False)
             )
         ).all()
         list_of_product_models = [row[0] for row in products_orm]
@@ -39,8 +38,8 @@ class ProductRepository(BaseRepository):
     async def remove_product(self, product_id: int):
         await self.db.execute(
             update(orm.products.Products)
-                .where(orm.products.Products.id == product_id)
-                .values(is_deleted=True)
+            .where(orm.products.Products.id == product_id)
+            .values(is_deleted=True)
         )
 
     async def get_product_by_id(self, id: int) -> Product | None:
@@ -51,4 +50,3 @@ class ProductRepository(BaseRepository):
             return Product.from_orm(product_orm)
         else:
             return None
-

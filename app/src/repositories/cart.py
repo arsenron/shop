@@ -8,9 +8,7 @@ from src.models.orm.cart import Cart, CartProducts
 class CartRepository(BaseRepository):
     async def get_cart(self, session_id: str) -> Cart | None:
         cart = await self.db.scalar(
-            select(Cart)
-            .filter(Cart.session_id == session_id)
-            .filter(Cart.is_placed == False)
+            select(Cart).filter(Cart.session_id == session_id).filter(Cart.is_placed == False)
         )
         if not cart:
             return None
@@ -24,9 +22,7 @@ class CartRepository(BaseRepository):
         return empty_cart
 
     async def add_product(self, cart: Cart, product_id: int, amount: int):
-        stmt = insert(CartProducts).values(
-            product_id=product_id, amount=amount, carts_id=cart.id
-        )
+        stmt = insert(CartProducts).values(product_id=product_id, amount=amount, carts_id=cart.id)
         excluded = dict(stmt.excluded)
         excluded.pop("carts_id")
         excluded.pop("product_id")

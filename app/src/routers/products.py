@@ -23,9 +23,7 @@ async def get_product(product_id: int, service: ProductService = Depends()):
     response_description="Id of the product",
     summary="Creates a new or updates a current product",
 )
-async def create_or_update_product(
-    product: ProductIn, service: ProductService = Depends()
-):
+async def create_or_update_product(product: ProductIn, service: ProductService = Depends()):
     return await service.create_or_update_product(product)
 
 

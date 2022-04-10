@@ -24,9 +24,7 @@ class SameKindRule(ICalculationRule, BaseModel):
     def apply_rule(self, shopping_cart: ShoppingCart):
         for cart_product in shopping_cart.cart_products:
             number_of_free_products = cart_product.amount // self.free_product
-            shopping_cart.total_amount -= (
-                number_of_free_products * cart_product.product.price
-            )
+            shopping_cart.total_amount -= number_of_free_products * cart_product.product.price
 
 
 class DiscountRule(ICalculationRule, BaseModel):
