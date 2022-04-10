@@ -40,11 +40,11 @@ Build a RESTful API for a part of a mini shopping app.
     - If something bad happens, you may provide your own database credentials in **app/cfg.yaml**
       and apply a database migration to your database located in **database/migrations**. 
 - When database is set up, run *shop server* from **app** directory by executing **poetry run app**
-- Default port is **9999**, but if it is already used, you may run **poetry run app --bind http://localhost:<your_port>**
+- Default port is **9999**, but if it is already used, you can bind to another port by running **poetry run app --bind http://localhost:<your_port>**
 - Openapi documentation is accessible through **/docs** endpoint 
 
 ### How to test
-To run integration tests, you should configure *postgres* superuser and password. 
+To run integration tests, configure *postgres* superuser and password. 
 By default, they are equal to **postgres** and **postgres**.
 To configure, create **DB_SUPERUSER** and **DB_SUPERUSER_PASSWORD** environment variables.
 
