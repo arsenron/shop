@@ -28,9 +28,9 @@ Build a RESTful API for a part of a mini shopping app.
 
 ### Prerequisites:
 - Linux
-- Postgresql >= 10
-- Poetry >= 1.1
 - Python >= 3.10
+- Poetry >= 1.1
+- Postgresql >= 12
 - Flyway >= 8
 
 ### How to run
@@ -41,11 +41,16 @@ Build a RESTful API for a part of a mini shopping app.
       and apply a database migration to your database located in **database/migrations**. 
 - When database is set up, run *shop server* from **app** directory by executing **poetry run app**
 - Default port is **9999**, but if it is already used, you can bind to another port by running **poetry run app --bind http://localhost:<your_port>**
-- Openapi documentation is accessible through **/docs** endpoint 
+- OpenAPI documentation is accessible through **/docs** endpoint 
 
 ### How to test
-To run integration tests, configure *postgres* superuser and password. 
-By default, they are equal to **postgres** and **postgres**.
-To configure, create **DB_SUPERUSER** and **DB_SUPERUSER_PASSWORD** environment variables.
+To run integration tests, you may want to configure *postgres* superuser. 
+By default, it is equal to **shop** (created in **init.sh** script). To execute tests without password,
+add to **pg_hba.conf** line 
+```host all	shop 127.0.0.1/32 trust``` **before**
+```host all all 127.0.0.1/32 <auth-method>```.
+To find the location of **pg_hba.conf**, ask postgres by issuing```SHOW hba_file;``` query.
+
+To configure default *superuser*, create **DB_SUPERUSER** environment variable.
 
 After prerequisistes are met, run **poetry run pytest** from **app** or **app/tests** .

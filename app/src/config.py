@@ -19,9 +19,9 @@ class Database(BaseSettings):
 
 
 class CalculationRules(BaseSettings):
-    same_kind_rule: SameKindRule = None
-    exceeding_rule: ExceedingRule = None
-    discount_rule: DiscountRule = None
+    same_kind_rule: SameKindRule | None = None
+    exceeding_rule: ExceedingRule | None = None
+    discount_rule: DiscountRule | None = None
 
 
 class Config(BaseSettings):
