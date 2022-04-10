@@ -28,11 +28,3 @@ CREATE TABLE cart_products
 );
 
 
-INSERT INTO products (name, price)  -- default products
-VALUES ('banana', 1.5),
-       ('orange', 0.5),
-       ('watermelon', 4),
-       ('bread', 0.3),
-       ('milk', 1),
-       ('sugar', 2);
-

@@ -1,5 +1,4 @@
 import argparse
-import functools
 
 import pydantic
 from pydantic import FileUrl, stricturl, validator
@@ -21,7 +20,6 @@ class CliArgs(pydantic.BaseModel):
         return cfg or "cfg.yaml"
 
 
-@functools.cache
 def get_cli_args() -> CliArgs:
     parser = argparse.ArgumentParser()
     parser.add_argument(

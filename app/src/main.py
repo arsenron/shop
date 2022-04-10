@@ -1,5 +1,3 @@
-from types import ModuleType
-
 import uvicorn
 from fastapi import FastAPI, Request
 from importlib import import_module
@@ -35,17 +33,14 @@ class Initializer:
 
     def add_routers_from_all_modules(self):
         """
-        Include routers from all modules and packages if python file
+        Include routers from all modules if a module
         contains **router** global variable
         """
         routers_dir = "routers"
         for module_name in routers.modules:
             module = import_module(f"src.{routers_dir}.{module_name}")
-            self.include_router(module)
-
-    def include_router(self, module: ModuleType):
-        if hasattr(module, "router"):
-            app.include_router(module.router)
+            if hasattr(module, "router"):
+                app.include_router(module.router)
 
 
 Initializer().initialize()

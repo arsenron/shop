@@ -17,6 +17,9 @@ def test_overwrite_product(client):
     for product in client.get("/products").json()["products"]:
         if product["name"] == some_very_unknown_product:
             assert product["price"] == 10
+            break
+    else:
+        raise ValueError("could not find product")
 
 
 def test_delete_product(client):
