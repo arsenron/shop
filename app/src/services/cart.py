@@ -72,5 +72,6 @@ class CartService(ICartService):
         try:
             shopping_cart_calculator.apply_calculation_rules()
         except ShoppingCartError as exc:
+            await self.cart_repo.rollback()
             raise HTTPException(status_code=400, detail=str(exc))
         return shopping_cart
