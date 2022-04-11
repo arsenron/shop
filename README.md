@@ -48,9 +48,9 @@ To run integration tests, you may want to configure *postgres* superuser.
 By default, it is equal to **shop** (created in **init.sh** script). To execute tests without password,
 add to **pg_hba.conf** line 
 ```host all	shop 127.0.0.1/32 trust``` **before**
-```host all all 127.0.0.1/32 <auth-method>```.
+```host all all 127.0.0.1/32 <auth-method>``` and restart database server.
 To find the location of **pg_hba.conf**, ask postgres by issuing```SHOW hba_file;``` query.
 
-To configure default *superuser*, create **DB_SUPERUSER** environment variable.
+To configure default *superuser*, create **SUPERUSER** environment variable.
 
 After prerequisistes are met, run **poetry run pytest** from **app** or **app/tests** .
