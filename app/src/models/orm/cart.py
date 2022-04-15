@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from .base import Base
 
 
-class Cart(Base):
+class CartOrm(Base):
     __tablename__ = "carts"
 
     id = Column(Integer, primary_key=True)
@@ -12,10 +12,10 @@ class Cart(Base):
     created_at = Column(DateTime, nullable=False, server_default=text("now()"))
     is_placed = Column(Boolean, nullable=False, server_default=text("false"))
 
-    cart_products = relationship("CartProducts", backref="cart", lazy="immediate")
+    cart_products = relationship("CartProductsOrm", backref="cart", lazy="immediate")
 
 
-class CartProducts(Base):
+class CartProductsOrm(Base):
     __tablename__ = "cart_products"
 
     id = Column(Integer, primary_key=True)
@@ -23,4 +23,4 @@ class CartProducts(Base):
     product_id = Column(ForeignKey("products.id"), nullable=False)
     amount = Column(Integer, nullable=False, server_default=text("1"))
 
-    product = relationship("Products", lazy="immediate")
+    product = relationship("ProductOrm", lazy="immediate")

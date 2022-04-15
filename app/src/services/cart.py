@@ -8,8 +8,7 @@ from src.deps.common import get_db
 from src.deps.cart import get_session_id
 from src.repositories.cart import CartRepository
 from src.models.core.cart import CartProduct, ShoppingCart, TotalAmount
-from src.models import orm
-import src.models.orm.cart
+from src.models.orm.cart import CartOrm
 from .calculations.cart_calculator import ShoppingCartCalculator
 from .calculations.rules import ShoppingCartError
 from .products import ProductService
@@ -41,31 +40,32 @@ class CartService(ICartService):
         self.session_id = session_id
 
     async def get_cart(self) -> ShoppingCart:
-        cart = await self.get_cart_orm()
-        return await self.create_shopping_cart(cart)
+        cart_orm = await self.get_cart_orm()
+        return await self.create_shopping_cart(cart_orm)
 
     async def add_product(self, product_id: int, amount: int) -> TotalAmount:
         await self.product_service.validate_if_product_exists(product_id)
-        cart = await self.get_cart_orm()
-        await self.cart_repo.add_product(cart, product_id, amount)
-        shopping_cart = await self.create_shopping_cart(cart)
+        cart_orm = await self.get_cart_orm()
+        await self.cart_repo.add_product(cart_orm, product_id, amount)
+        shopping_cart = await self.create_shopping_cart(cart_orm)
         return TotalAmount(total_amount=shopping_cart.total_amount)
 
     async def place_order(self) -> ShoppingCart:
-        cart = await self.get_cart_orm()
-        shopping_cart = await self.create_shopping_cart(cart)
-        await self.cart_repo.delete_cart(cart)
+        cart_orm = await self.get_cart_orm()
+        shopping_cart = await self.create_shopping_cart(cart_orm)
+        await self.cart_repo.place_cart(cart_orm)
         return shopping_cart
 
-    async def get_cart_orm(self) -> orm.cart.Cart:
-        cart = await self.cart_repo.get_cart(self.session_id)
-        if not cart:
-            cart = await self.cart_repo.create_cart(self.session_id)
-        return cart
+    async def get_cart_orm(self) -> CartOrm:
+        cart_orm = await self.cart_repo.get_cart(self.session_id)
+        if not cart_orm:
+            cart_orm = await self.cart_repo.create_cart(self.session_id)
+        return cart_orm
 
-    async def create_shopping_cart(self, cart_orm: orm.cart.Cart) -> ShoppingCart:
-        shopping_cart = ShoppingCart()
-        shopping_cart.add_products([CartProduct.from_orm(product) for product in cart_orm.cart_products])
+    async def create_shopping_cart(self, cart_orm: CartOrm) -> ShoppingCart:
+        shopping_cart = ShoppingCart(
+            cart_products=[CartProduct.from_orm(product) for product in cart_orm.cart_products]
+        )
         shopping_cart_calculator = ShoppingCartCalculator(shopping_cart=shopping_cart)
         try:
             shopping_cart_calculator.apply_calculation_rules()

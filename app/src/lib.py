@@ -1,3 +1,5 @@
+from typing import Type
+
 from pydantic import BaseModel
 
 
@@ -12,3 +14,13 @@ default_response_example = {
         "content": {"application/json": {"example": {"message": "ok"}}},
     }
 }
+
+
+def response_model(model: Type["BaseModel"]) -> dict:
+    """
+    In case of inability to use constructor twice when providing response_model=<model>.
+
+    Issue: `<https://github.com/tiangolo/fastapi/issues/3021>`_
+    """
+    # due to double init by fastapi if provide response_model = ShoppingCart
+    return {200: {"model": model}}

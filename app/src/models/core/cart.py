@@ -1,4 +1,4 @@
-from pydantic import conint
+from pydantic import conint, root_validator
 
 from .commons import BaseModel, RoundedFloat
 from src.models.core.products import Product
@@ -17,17 +17,13 @@ class ShoppingCart(BaseModel):
     cart_products: list[CartProduct] = []
     total_amount: RoundedFloat = 0
 
-    def add_product(self, cart_product: CartProduct):
-        cost_of_products = cart_product.product.price * cart_product.amount
-        for i, existing_cart_product in enumerate(self.cart_products):
-            if existing_cart_product.product.id == cart_product.product.id:
-                self.cart_products[i] = cart_product
-                self.total_amount += cost_of_products
-                break
-        else:
-            self.cart_products.append(cart_product)
-            self.total_amount += cost_of_products
-
-    def add_products(self, products: list[CartProduct]):
-        for product in products:
-            self.add_product(product)
+    @root_validator
+    def calculate_cart(cls, values):
+        total_amount = 0
+        cart_products = values["cart_products"]
+        if cart_products:
+            for i, cart_product in enumerate(cart_products):
+                cost_of_products = cart_product.product.price * cart_product.amount
+                total_amount += cost_of_products
+        values["total_amount"] = total_amount
+        return values

@@ -11,15 +11,15 @@ class ProductService:
         self.product_repo = ProductRepository(db)
 
     async def get_products(self) -> Products:
-        all_products = await self.product_repo.get_products()
-        return all_products
+        products_orm = await self.product_repo.get_products()
+        return Products(products=[Product.from_orm(po) for po in products_orm])
 
     async def get_product_by_id(self, id: int) -> Product:
         product = await self.product_repo.get_product_by_id(id)
         if not product:
             raise HTTPException(status_code=400, detail="product does not exist")
         else:
-            return product
+            return Product.from_orm(product)
 
     async def create_or_update_product(self, product_in: ProductIn) -> ProductId:
         product_id = await self.product_repo.add_product(product_in)

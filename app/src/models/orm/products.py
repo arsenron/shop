@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, Text, Float, Boolean
 from .base import Base
 
 
-class Products(Base):
+class ProductOrm(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True)

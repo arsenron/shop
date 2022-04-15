@@ -3,16 +3,15 @@ from fastapi import APIRouter, Depends, Query
 from src.services.cart import ICartService, CartService
 from src.models.core.cart import ShoppingCart, TotalAmount
 
+from src.lib import response_model
+
 router = APIRouter(prefix="/cart", tags=["cart"])
 
 
-@router.get(
-    "",
-    response_model=ShoppingCart,
-    summary="Current cart",
-)
+@router.get("", summary="Current cart", responses=response_model(ShoppingCart))
 async def get_cart(service: ICartService = Depends(CartService)):
-    return await service.get_cart()
+    cart = await service.get_cart()
+    return cart
 
 
 @router.put(
@@ -34,7 +33,7 @@ async def store_in_cart(
 
 @router.post(
     "/place",
-    response_model=ShoppingCart,
+    responses=response_model(ShoppingCart),
     response_description="Final shopping cart",
     description="Finishes the order and cleans up the cart",
 )
