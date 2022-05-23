@@ -1,19 +1,17 @@
 import argparse
 
 import pydantic
-from pydantic import FileUrl, stricturl, validator
+from pydantic import validator, HttpUrl
 
-
-AllowedUrl = FileUrl | stricturl(allowed_schemes=["tcp", "http"], tld_required=False)
 
 
 class CliArgs(pydantic.BaseModel):
-    bind: AllowedUrl
+    bind: HttpUrl
     cfg: str
 
     @validator("bind", pre=True)
     def set_bind(cls, bind):
-        return bind or "http://localhost:9999"
+        return bind or "http://0.0.0.0:80"
 
     @validator("cfg", pre=True)
     def set_cfg(cls, cfg):

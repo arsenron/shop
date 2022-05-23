@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  core_api:
+    image: shop:latest
+    depends_on:
+      flyway:
+        condition: service_completed_successfully
+    tty: true
+    volumes:
+      - ./:/app
+    working_dir: /app/src
+    environment:
+      DATABASE_NAME: app
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+    ports:
+      - "127.0.0.1:9998:80"
+    command: python main.py --bind http://0.0.0.0:80 --cfg ../cfg.yaml
+
+  db:
+    image: postgres:14.2-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    volumes:
+      - shop:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5442:5432"
+
+  flyway:
+    image: flyway/flyway:8.5-alpine
+    depends_on:
+      db:
+        condition: service_started
+    volumes:
+      - ../database/migrations:/migrations
+    command:
+     - -user=postgres
+     - -password=postgres
+     - -sqlMigrationPrefix=v
+     - -url=jdbc:postgresql://db:5432/app
+     - -locations=filesystem:/migrations
+     - -connectRetries=60
+     - migrate
+
+volumes:
+  shop:

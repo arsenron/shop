@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  shop:
+    depends_on:
+      flyway:
+        condition: service_completed_successfully
+    image: shop:latest
+    tty: true
+    volumes:
+      - ../:/app
+    working_dir: /app/tests
+    environment:
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: test
+      LOG_LEVEL: ERROR
+
+  db:
+    image: postgres:14.2-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test
+
+  flyway:
+    image: flyway/flyway:8.5-alpine
+    depends_on:
+      db:
+        condition: service_started
+    volumes:
+      - ../../database/migrations:/migrations
+    command:
+     - -user=postgres
+     - -password=postgres
+     - -sqlMigrationPrefix=v
+     - -url=jdbc:postgresql://db:5432/test
+     - -locations=filesystem:/migrations
+     - -connectRetries=60
+     - migrate

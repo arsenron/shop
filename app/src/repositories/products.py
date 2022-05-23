@@ -5,6 +5,10 @@ from src.models.core.products import ProductIn
 from src.models.orm.products import ProductOrm
 
 
+class DeletedRowError(Exception):
+    pass
+
+
 class ProductRepository(BaseRepository):
     async def get_products(self) -> list[ProductOrm]:
         products = (
@@ -30,7 +34,19 @@ class ProductRepository(BaseRepository):
             return product.id
 
     async def remove_product(self, product_id: int):
-        await self.db.execute(update(ProductOrm).where(ProductOrm.id == product_id).values(is_deleted=True))
+        row_is_already_deleted = await self.db.scalar(
+            select(ProductOrm)
+                .filter(ProductOrm.id == product_id)
+                .filter(ProductOrm.is_deleted == True)
+                .exists()
+                .select()
+        )
+        if row_is_already_deleted:
+            raise DeletedRowError
+        else:
+            await self.db.execute(
+                update(ProductOrm).where(ProductOrm.id == product_id).values(is_deleted=True)
+            )
 
     async def get_product_by_id(self, id: int) -> ProductOrm | None:
         product = await self.db.scalar(select(ProductOrm).filter(ProductOrm.id == id))

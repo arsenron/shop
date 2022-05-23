@@ -15,7 +15,7 @@ async def get_cart(service: ICartService = Depends(CartService)):
 
 
 @router.put(
-    "/store/{product_id}",
+    "/products/{product_id}",
     response_model=TotalAmount,
     summary="Stores products in a cart",
     description="You can control the number of items with "
@@ -32,7 +32,7 @@ async def store_in_cart(
 
 
 @router.post(
-    "/place",
+    "",
     responses=response_model(ShoppingCart),
     response_description="Final shopping cart",
     description="Finishes the order and cleans up the cart",

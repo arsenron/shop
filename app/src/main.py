@@ -48,10 +48,7 @@ Initializer().initialize()
 
 def main():
     server = cli.cli_args.bind
-    if server.scheme in ("tcp", "http"):
-        uvicorn.run(app, host=server.host, port=int(server.port))
-    elif server.scheme == "file":
-        uvicorn.run(app, uds=server.path, forwarded_allow_ips="*", proxy_headers=True)
+    uvicorn.run(app, host=server.host, port=int(server.port))
 
 
 if __name__ == "__main__":
