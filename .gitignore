@@ -6,3 +6,4 @@ venv
 sketch
 .run
 *.swp
+.pytest_cache
