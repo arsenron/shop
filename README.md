@@ -1,6 +1,6 @@
 ## Shopping API
 
-Simple RESTful API using fastapi and sqlalchemy.
+Simple RESTful API using FastAPI and SQLAlchemy.
 
 ### Features
 
